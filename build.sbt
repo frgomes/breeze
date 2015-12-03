@@ -13,6 +13,8 @@ lazy val natives = project.in(file("natives")).dependsOn(math)
 
 lazy val viz = project.in( file("viz")).dependsOn(math)
 
+lazy val frames = project.in( file("frames")).dependsOn(math, natives)
+
 lazy val benchmark = project.in(file("benchmark")).dependsOn(math, natives)
 
 scalaVersion := "2.11.4"
