@@ -68,6 +68,32 @@ package object linalg {
     def toFile: File = new File(s)
   }
 
+  def csvreader(
+               reader: java.io.Reader,
+               separator: Char = ',',
+               quote: Char = '"',
+               escape: Char = '\\',
+               skipLines: Int = 0): DenseMatrix[Double] = {
+    var mat = CSVReader.read(reader, separator, quote, escape, skipLines)
+    mat = mat.takeWhile(line => line.length != 0 && line.head.nonEmpty) // empty lines at the end
+    reader.close()
+    if (mat.length == 0) {
+      DenseMatrix.zeros[Double](0, 0)
+    } else {
+      DenseMatrix.tabulate(mat.length, mat.head.length)((i, j) => mat(i)(j).toDouble)
+    }
+  }
+
+  def csvwriter(
+                writer: java.io.Writer,
+                mat: Matrix[Double],
+                separator: Char = ',',
+                quote: Char = '\u0000',
+                escape: Char = '\\',
+                skipLines: Int = 0): Unit = {
+    CSVWriter.write(writer, IndexedSeq.tabulate(mat.rows, mat.cols)(mat(_, _).toString), separator, quote, escape)
+  }
+
   /**
    * Reads in a DenseMatrix from a CSV File
    */
